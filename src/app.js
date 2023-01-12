@@ -69,8 +69,13 @@ app.post("/participants", async (req, res)=>{
     }
 });
 
-app.get("/participants", (req, res)=>{
-
+app.get("/participants", async (req, res)=>{
+    try{
+        const participa = await participantesCollection.find().toArray();
+        res.send(participa);
+    }catch(err){
+        res.status(500).send(err); 
+    }
 });
 
 app.post("/messages", (req, res)=>{
