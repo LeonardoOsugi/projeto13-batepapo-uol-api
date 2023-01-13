@@ -10,6 +10,12 @@ const participantesSchema = joi.object({
     name: joi.string().min(3).required()
 });
 
+const messagesSchema = joi.object({
+    to: joi.string().min(3).required(),
+    text: joi.string().min(3).required(),
+    type: joi.string().valid("message", "private_message")
+})
+
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
 
 let db;
@@ -78,8 +84,38 @@ app.get("/participants", async (req, res)=>{
     }
 });
 
-app.post("/messages", (req, res)=>{
+app.post("/messages", async (req, res)=>{
+    const {to, text, type} = req.body;
+    const from = req.headers.user;
 
+    const userExiste = await participantesCollection.findOne({name: from})
+
+    const validation = messagesSchema.validate({to, text, type}, {abortEarly: false});
+
+    if(validation.error){
+        const erros = validation.error.details.map((detail) => detail.message);
+
+        res.status(422).send(erros);
+        return;
+    }
+
+    if(!userExiste){
+        res.sendStatus(404);
+        return;
+    }
+
+    try{
+        await mensagensCollection.insertOne({
+            from: from,
+            to,
+            text,
+            type,
+            time: date
+        });
+        res.sendStatus(201);
+    }catch(err){
+        res.status(500).send(err);
+    }
 });
 
 app.get("/messages", (req, res) => {
@@ -92,4 +128,4 @@ app.post("/status", (req, res) => {
 
 
 
-app.listen(process.env.PORT, console.log(`app rodando na porta ${process.env.PORT}`));
+app.listen(5000, console.log(`app rodando na porta ${5000}`));
