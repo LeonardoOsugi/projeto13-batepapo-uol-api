@@ -167,8 +167,8 @@ app.post("/status", async (req, res) => {
 setInterval(async() => {
     const array = await participantesCollection.find().toArray();
 
-    array.filter(usuario =>{
-        const diferenca =  (Date.now() -usuario.lastStatus)/1000;
+    array.forEach(usuario =>{
+        const diferenca =  (Date.now()-usuario.lastStatus)/1000;
 
         if(diferenca > 10){
             participantesCollection.deleteOne({_id: usuario.id});
