@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { MongoClient} from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import joi from "joi";
 import dayjs from "dayjs";
 import dotenv from "dotenv";
@@ -164,6 +164,16 @@ app.post("/status", async (req, res) => {
     }
 });
 
+setInterval(async() => {
+    const array = await participantesCollection.find().toArray();
 
+    array.filter(usuario =>{
+        const diferenca =  (Date.now() -usuario.lastStatus)/1000;
+
+        if(diferenca > 10){
+            participantesCollection.deleteOne({_id: usuario.id});
+        }
+    } )
+},15000);
 
 app.listen(5000, console.log(`app rodando na porta ${5000}`));
