@@ -120,28 +120,31 @@ app.post("/messages", async (req, res)=>{
 
 app.get("/messages", async (req, res) => {
     const from = req.headers.user;
-    const limit = Number(req.query.limit);
+    const {limit} = req.query;
 
     const listarMessages = await mensagensCollection.find().toArray();
 
     const userPodeVer = listarMessages.filter(l =>{if(l.to === from || l.from === from){
         return true;
-    }else if(l.type === "private_message" && (l.to === from || l.from === from) ){
-        return true;
-    }});
-
-    if(limit <= 0){
-            res.sendStatus(422);
-            return;
     }
+    // else if(l.type === "private_message" && (l.to === from || l.from === from) ){
+    //     return true;
+    // }
+});
 
     if(limit){
-        res.send(userPodeVer.slice(-limit));
+        const numeroLimit = Number(limit);
+
+        if(numeroLimit <= 0 || isNaN(numeroLimit) ){
+                res.sendStatus(422);
+                return;
+        }
+        res.send(userPodeVer.slice(-numeroLimit).reverse());
         return;
     }
 
     try{
-        res.send(listarMessages);
+        res.send(listarMessages.reverse());
     }catch(err){
         res.status(500).send(err);
     }
@@ -164,23 +167,23 @@ app.post("/status", async (req, res) => {
     }
 });
 
-setInterval(async() => {
-    const array = await participantesCollection.find().toArray();
+// setInterval(async() => {
+//     const array = await participantesCollection.find().toArray();
 
-    array.forEach(async usuario =>{
-        const diferenca =  (Date.now()-usuario.lastStatus)/1000;
+//     array.forEach(async usuario =>{
+//         const diferenca =  (Date.now()-usuario.lastStatus)/1000;
         
-        if(diferenca > 10){
-            await participantesCollection.deleteOne({_id: usuario.id});
-            await mensagensCollection.insertOne({
-                from: usuario.from,
-                to: "Todos",
-                text: "sai da sala...",
-                type: "status",
-                time: date
-            });
-        }
-})
-},15000);
+//         if(diferenca > 10){
+//             await participantesCollection.deleteOne({_id: usuario.id});
+//             await mensagensCollection.insertOne({
+//                 from: usuario.from,
+//                 to: "Todos",
+//                 text: "sai da sala...",
+//                 type: "status",
+//                 time: date
+//             });
+//         }
+// })
+// },15000);
 
 app.listen(5000, console.log(`app rodando na porta ${5000}`));
