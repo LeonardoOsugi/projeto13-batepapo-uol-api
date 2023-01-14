@@ -167,12 +167,12 @@ app.post("/status", async (req, res) => {
 setInterval(async() => {
     const array = await participantesCollection.find().toArray();
 
-    array.forEach(usuario =>{
+    array.forEach(async usuario =>{
         const diferenca =  (Date.now()-usuario.lastStatus)/1000;
-
+        
         if(diferenca > 10){
-            participantesCollection.deleteOne({_id: usuario.id});
-            mensagensCollection.insertOne({
+            await participantesCollection.deleteOne({_id: usuario.id});
+            await mensagensCollection.insertOne({
                 from: usuario.from,
                 to: "Todos",
                 text: "sai da sala...",
@@ -180,7 +180,7 @@ setInterval(async() => {
                 time: date
             });
         }
-    } )
+})
 },15000);
 
 app.listen(5000, console.log(`app rodando na porta ${5000}`));
