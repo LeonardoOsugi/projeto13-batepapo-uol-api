@@ -100,7 +100,7 @@ app.post("/messages", async (req, res)=>{
     }
 
     if(!userExiste){
-        res.sendStatus(404);
+        res.sendStatus(422);
         return;
     }
 
