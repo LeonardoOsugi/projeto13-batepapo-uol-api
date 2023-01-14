@@ -148,7 +148,20 @@ app.get("/messages", async (req, res) => {
 });
 
 app.post("/status", async (req, res) => {
+    const from = req.headers.user;
+    
+    const consta = await participantesCollection.findOne({name: from});
 
+    if(!consta){
+        res.sendStatus(404);
+    }
+
+    try{
+        await participantesCollection.updateOne({lastStatus: Date.now()},{$set: req.body});
+        res.sendStatus(200);
+    }catch(err){
+        res.status(500).send(err);
+    }
 });
 
 
