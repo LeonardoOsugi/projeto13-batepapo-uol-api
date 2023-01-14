@@ -95,7 +95,7 @@ app.post("/messages", async (req, res)=>{
     if(validation.error){
         const erros = validation.error.details.map((detail) => detail.message);
 
-        res.status(422).send(erros);
+        res.status(422);
         return;
     }
 
