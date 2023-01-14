@@ -172,6 +172,13 @@ setInterval(async() => {
 
         if(diferenca > 10){
             participantesCollection.deleteOne({_id: usuario.id});
+            mensagensCollection.insertOne({
+                from: usuario.from,
+                to: "Todos",
+                text: "sai da sala...",
+                type: "status",
+                time: date
+            });
         }
     } )
 },15000);
