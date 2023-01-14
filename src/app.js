@@ -93,9 +93,9 @@ app.post("/messages", async (req, res)=>{
     const validation = messagesSchema.validate({to, text, type}, {abortEarly: false});
 
     if(validation.error){
-        // const erros = validation.error.details.map((detail) => detail.message);
+        const erros = validation.error.details.map((detail) => detail.message);
 
-        res.sendStatus(422);
+        res.status(422).send(erros);
         return;
     }
 
@@ -118,11 +118,30 @@ app.post("/messages", async (req, res)=>{
     }
 });
 
-app.get("/messages", (req, res) => {
+app.get("/messages", async (req, res) => {
+    const from = req.headers.user;
+    const limit = Number(req.query.limit);
 
+    const listarMessages = await mensagensCollection.find().toArray();
+
+    const userPodeVer = listarMessages.filter(l =>{if(l.to === from || l.from === from){
+        return true;
+    }});
+
+    if(limit){
+        res.send(userPodeVer.slice(-limit));
+        return;
+    }
+
+    try{
+        const mesi = await mensagensCollection.find().toArray();
+        res.send(mesi);
+    }catch(err){
+        res.status(500).send(err);
+    }
 });
 
-app.post("/status", (req, res) => {
+app.post("/status", async (req, res) => {
 
 });
 
