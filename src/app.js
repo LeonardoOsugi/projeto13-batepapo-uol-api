@@ -13,7 +13,7 @@ const participantesSchema = joi.object({
 const messagesSchema = joi.object({
     to: joi.string().min(3).required(),
     text: joi.string().min(3).required(),
-    type: joi.string().valid("message", "private_message")
+    type: joi.string().valid("message", "private_message").required()
 })
 
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
