@@ -122,12 +122,7 @@ app.get("/messages", async (req, res) => {
     const from = req.headers.user;
     const {limit} = req.query;
 
-    const listarMessages = await mensagensCollection.find().toArray();
-
-    const userPodeVer = listarMessages.filter(l =>{if(l.to === from || l.from === from|| l.type === "message"){
-        return true;
-    }
-});
+    const listarMessages = await mensagensCollection.find({$or: [{from: from}, {to: {$in: [from, "Todos"]}},{type: "message"}],}).toArray();
 
     if(limit){
         const numeroLimit = Number(limit);
@@ -136,7 +131,7 @@ app.get("/messages", async (req, res) => {
                 res.sendStatus(422);
                 return;
         }
-        res.send(userPodeVer.slice(-numeroLimit).reverse());
+        res.send(listarMessages.slice(-numeroLimit).reverse());
         return;
     }
 
