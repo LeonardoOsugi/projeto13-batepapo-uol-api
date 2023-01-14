@@ -126,10 +126,9 @@ app.get("/messages", async (req, res) => {
 
     const userPodeVer = listarMessages.filter(l =>{if(l.to === from || l.from === from){
         return true;
+    }else if(l.type === "private_message" && (l.to === from || l.from === from) ){
+        return true;
     }
-    // else if(l.type === "private_message" && (l.to === from || l.from === from) ){
-    //     return true;
-    // }
 });
 
     if(limit){
