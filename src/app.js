@@ -124,18 +124,22 @@ app.get("/messages", async (req, res) => {
 
     const listarMessages = await mensagensCollection.find().toArray();
 
-    const userPodeVer = listarMessages.filter(l =>{if(l.to === from || l.from === from){
+    const userPodeVer = listarMessages.filter(l =>{if(l.to === from || l.from === from || (l.type === "private_message" && (l.to === from || l.from === from) )){
         return true;
     }});
 
+    if(limit <= 0){
+        res.sendStatus(422);
+        return;
+    }
+
     if(limit){
-        res.send(userPodeVer.slice(-limit));
+        res.send(userPodeVer.reverse().slice(-limit));
         return;
     }
 
     try{
-        const mesi = await mensagensCollection.find().toArray();
-        res.send(mesi);
+        res.send(listarMessages);
     }catch(err){
         res.status(500).send(err);
     }
