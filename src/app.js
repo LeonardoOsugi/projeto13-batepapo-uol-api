@@ -128,6 +128,8 @@ app.get("/messages", async (req, res) => {
         return true;
     }else if(l.type === "private_message" && (l.to === from || l.from === from) ){
         return true;
+    }else{
+        return false;
     }
 });
 
