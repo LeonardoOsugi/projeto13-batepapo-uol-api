@@ -93,9 +93,9 @@ app.post("/messages", async (req, res)=>{
     const validation = messagesSchema.validate({to, text, type}, {abortEarly: false});
 
     if(validation.error){
-        const erros = validation.error.details.map((detail) => detail.message);
+        // const erros = validation.error.details.map((detail) => detail.message);
 
-        res.status(422);
+        res.sendStatus(422);
         return;
     }
 
