@@ -129,12 +129,12 @@ app.get("/messages", async (req, res) => {
     }});
 
     if(limit <= 0){
-        res.sendStatus(422);
-        return;
+            res.sendStatus(422);
+            return;
     }
 
     if(limit){
-        res.send(userPodeVer.reverse().slice(-limit));
+        res.send(userPodeVer.slice(-limit));
         return;
     }
 
