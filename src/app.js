@@ -160,25 +160,23 @@ app.post("/status", async (req, res) => {
 });
 
 setInterval(async() => {
-    const array = await participantesCollection.find().toArray();
+    const diferenca = Date.now() - 1000;
+    const array = await participantesCollection.find({lastStatus: {$lte: diferenca}}).toArray();
 
     try{
-        array.forEach(async usuario =>{
-            const diferenca =  (Date.now()-usuario.lastStatus)/1000;
-            
-            if(diferenca > 10){
-            
-                    await participantesCollection.deleteOne({_id: usuario.id});
-                    await mensagensCollection.insertOne({
-                        from: usuario.from,
-                        to: "Todos",
-                        text: "sai da sala...",
-                        type: "status",
-                        time: date
-                    });
-                    return;
-            }
-        })
+        if(diferenca > 10){
+            array.forEach(async usuario =>{
+                        await participantesCollection.deleteOne({_id: usuario.id});
+                        await mensagensCollection.insertOne({
+                            from: usuario.from,
+                            to: "Todos",
+                            text: "sai da sala...",
+                            type: "status",
+                            time: date
+                        });
+                        return;
+            });
+        }
     }catch(err){console.log(err);}
 },15000);
 
