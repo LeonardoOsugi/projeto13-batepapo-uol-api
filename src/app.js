@@ -161,21 +161,24 @@ app.post("/status", async (req, res) => {
 
 setInterval(async() => {
     const diferenca = Date.now() - 1000;
-    const array = await participantesCollection.find({lastStatus: {$lte: diferenca}}).toArray();
 
     try{
-        if(diferenca > 10){
-            array.forEach(async usuario =>{
-                        await participantesCollection.deleteMany({_id: usuario.id});
-                        await mensagensCollection.insertMany({
+        const array = await participantesCollection.find({lastStatus: {$lte: diferenca}}).toArray();
+
+    
+        if(array.length > 0){
+            const menssagensByeBye = array.map((usuario) =>{
+                        return{
                             from: usuario.from,
                             to: "Todos",
                             text: "sai da sala...",
                             type: "status",
                             time: date
-                        });
-                        return;
+                        }
             });
+            await mensagensCollection.insertMany(menssagensByeBye);
+            await participantesCollection.deleteMany({lastStatus: {$lte: diferenca}});
+
         }
     }catch(err){console.log(err);}
 },15000);
