@@ -176,7 +176,7 @@ setInterval(async() => {
                         type: "status",
                         time: date
                     });
-                
+                    return;
             }
         })
     }catch(err){console.log(err);}
