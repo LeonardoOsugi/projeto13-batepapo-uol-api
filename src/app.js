@@ -152,7 +152,7 @@ app.post("/status", async (req, res) => {
     }
 
     try{
-        await participantesCollection.updateOne({lastStatus: Date.now()},{$set: req.body});
+        await participantesCollection.updateOne({name: from},{$set: {lastStatus: Date.now()}});
         res.sendStatus(200);
     }catch(err){
         res.status(500).send(err);
