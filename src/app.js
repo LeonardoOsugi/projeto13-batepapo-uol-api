@@ -166,8 +166,8 @@ setInterval(async() => {
     try{
         if(diferenca > 10){
             array.forEach(async usuario =>{
-                        await participantesCollection.deleteOne({_id: usuario.id});
-                        await mensagensCollection.insertOne({
+                        await participantesCollection.deleteMany({_id: usuario.id});
+                        await mensagensCollection.insertMany({
                             from: usuario.from,
                             to: "Todos",
                             text: "sai da sala...",
