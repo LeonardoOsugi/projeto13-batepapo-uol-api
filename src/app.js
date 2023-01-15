@@ -169,7 +169,7 @@ setInterval(async() => {
         if(array.length > 0){
             const menssagensByeBye = array.map((usuario) =>{
                         return{
-                            from: usuario.from,
+                            from: usuario.name,
                             to: "Todos",
                             text: "sai da sala...",
                             type: "status",
